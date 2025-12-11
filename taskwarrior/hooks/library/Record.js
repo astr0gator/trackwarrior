@@ -13,16 +13,22 @@ class Record {
 
     constructor(data) {
         this.data = data;
-
+    
         if (this.data.tags) {
             const clearTimeTags = config.getArray('clear_time_tags', settings.clearTimeTags);
-            const updateTimeTags = config.getArray('update_time_tags', settings.clearTimeTags);
-            this.data.tags = this.data.tags.filter(tag => {
+            const updateTimeTags = config.getArray('update_time_tags', settings.updateTimeTags);
+            
+            // Convert string to array if needed
+            let tagsArray = Array.isArray(this.data.tags) 
+                ? this.data.tags 
+                : this.data.tags.split(',').map(tag => tag.trim());
+            
+            this.data.tags = tagsArray.filter(tag => {
                 const condition = !clearTimeTags.includes(tag);
                 if (!condition) {
                     this.cleartime = true;
                 }
-
+    
                 return condition && !updateTimeTags.includes(tag);
             });
         }
